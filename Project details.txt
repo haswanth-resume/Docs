@@ -1,0 +1,18 @@
+Project 1: Automated Setup of 3 Tier Application locally
+Project 2: Lift & Shift Web Application on AWS Cloud
+Project 3: Re-Architecture Web Application on AWS Cloud
+Project 4: Continous Integration of Java Project
+Project 5: Continous Integration setup on AWS Cloud
+Project 6: Continous Delivery of Java Project
+Project 7: Continous Delivery setup on AWS Cloud
+Project 8: Project Confiquration Management with Ansible
+Project 9: Ansible for AWS Cloud Automation
+Project 10: Continous Delivery with Jenkins & Ansible
+Project 11: Continous Delivery with Jenkins & AWS Services
+Project 12: Containerization of Java Web Project
+Project 13: Kubernetes for Production Containers
+Project 14: Java Project deployment on Kubernetes Cluster
+Project 15: CI/CD for Containers
+Project 16: AWS Security Implementations
+Project 17: CloudFormation to Setup Entire Cloud Stack
+Project 18: Terraform to Setup Cloud Stack
