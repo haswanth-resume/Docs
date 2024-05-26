@@ -1,0 +1,145 @@
+docker build -t imagename ./
+docker run imagename
+docker start <container ID>= To start Containers
+
+docker ps                                    =to list the containers
+docker image ls (or) dcoker images           = to list the images
+docker rmi -f $(docker images -aq)           =to remove all images
+docker rm $(docker ps -aq)                   = To remove all existing containers (not images!)
+docker system prune                          =To remove all dangling images and stopped containers
+docker compose up -d                         = to run docker compose image as container
+docker compose down                          =to stop the compose container
+docker network create todo-app               =to create a network
+docker volume create ubuntu-volume           = To create volume
+docker run -d --name my_container --mount source=my_volume,target=/path/in/container ubuntu:latest
+docker run -d --name ubuntu --mount source=ubuntu-volume,target=/bin/ ubuntu
+docker logs <container id>                   = To check logs
+docker image history getting-started         = To check history of image
+
+
+
+00cad2b36f73
+
+
+docker run -i -t ubuntu /bin/bash 
+docker exec -it <container_id_or_name> /bin/bash = To access container 
+Remember, to detach from the container without stopping it, use the CTRL-p CTRL-q key combination.
+
+Dockerfile:
+
+FROM node:18-alpine
+WORKDIR /app
+COPY . .
+RUN yarn install --production
+CMD ["node", "src/index.js"]
+EXPOSE 3000
+
+
+Docker Compose File:
+
+services:
+  app:
+    image: node:18-alpine
+    command: sh -c "yarn install && yarn run dev"
+    ports:
+      - 127.0.0.1:3000:3000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_DB: todos
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - todo-mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: todos
+
+volumes:
+  todo-mysql-data:
+  
+  
+The docker build command uses the Dockerfile to build a new image. You might have noticed that Docker downloaded a lot of "layers". This is because you instructed the builder that you wanted to start from the node:18-alpine image. But, since you didn't have that on your machine, Docker needed to download the image.
+After Docker downloaded the image, the instructions from the Dockerfile copied in your application and used yarn to install your application's dependencies. The CMD directive specifies the default command to run when starting a container from this image.
+
+Finally, the -t flag tags your image. Think of this as a human-readable name for the final image. Since you named the image getting-started, you can refer to that image when you run a container.
+
+The . at the end of the docker build command tells Docker that it should look for the Dockerfile in the current directory.
+
+
+
+Create resourcegroup 
+az group create --name myResourceGroup --location eastus
+To create ACR:
+az acr create --resource-group myResourceGroup --name  --sku Basic(((old)))
+az acr create --resource-group myResourceGroup --name <acrName> $ACRNAME --sku Basic(((new)))
+Build and push images to ACR:
+az acr build --registry $ACRNAME --image aks-store-demo/product-service:latest ./src/product-service/
+az acr build --registry $ACRNAME --image aks-store-demo/order-service:latest ./src/order-service/
+az acr build --registry $ACRNAME --image aks-store-demo/store-front:latest ./src/store-front/
+To check images in ACR:
+az acr repository list --name $ACRNAME --output table
+
+to login into azure container registry
+az acr login --name <acrName> 
+To get the login server address of acr
+az acr list --resource-group myResourceGroup --query "[].{acrLoginServer:loginServer}" --output table
+To tag
+docker tag mcr.microsoft.com/azuredocs/azure-vote-front:v1 <acrLoginServer>/azure-vote-front:v1
+To push
+docker push <acrLoginServer>/azure-vote-front:v1
+To return a list of images that have been pushed to your ACR instance
+az acr repository list --name <acrName> --output table
+To see the tags for a specific image
+az acr repository show-tags --name <acrName> --repository azure-vote-front --output table
+
+
+
+az aks create \
+    --resource-group  learn-d82dda13-e213-4da2-8042-5ed4d6a0f64a\
+    --name myAKSCluster \
+    --node-count 2 \
+    --generate-ssh-keys \
+    --attach-acr myacr1123.azurecr.io
+
+
+
+create a acr in azure and create kubernetes cluster
+clone voting app repo from azure to local and push to the azure
+click on classic editor and search for docker 
+in build an image give service connection and give acr details
+in Push an image give service connection and give acr details
+Add copy files by searching and paste the text from Publish Artifact drop(path to publish)
+Add Publish Artifact drop get path to publish
+save and queue
+In Releases select Deploy to a Kubernetes cluster
+In Artifacts section give your build name
+Go to Stage create a new aks connection in sevice connection name give cluster name and check the checbox for Security
+slelect apply in command section below check Use Configuration file and locate kubernetes yaml file and save
+and save and create release
+go to release and check
+give external ip 
+ we can increase replica count of kubernetes using kubectl
+
+
+
+
+$env:LOC_NAME="eastus"
+$env:RAND="$RANDOM"
+$env:RG_NAME="myResourceGroup"
+$env:AKS_NAME="myAKSCluster"
+$env:SB_NS="sb-store-demo-$RAND"
+
+Write-Host $env:LOC_NAME
+Write-Host $env:RAND
+Write-Host $env:RG_NAME
+Write-Host $env:AKS_NAME
+Write-Host $env:SB_NS
+
+
+az servicebus namespace create -n $SB_NS$RANDOM -g $RG_NAME -l $LOC_NAME

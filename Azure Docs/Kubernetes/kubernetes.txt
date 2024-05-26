@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+ name:my-pod
+spec:
+ containers:
+  - name: my-container
+    image: nginx:latest
+	ports:
+	- containerPort: 8000
+	
+	
+	
+Kubelet just loves ImagePullBackOff 👇
+
+Wonder why? Come on, let's deep dive 🥳
+
+What's happening in the diagram:
+
+→ User wants a Pod.
+→ APIServer/Kubelet tries to create it.
+→ Container Registry doesn't find an image.
+→ Kubelet throws ImagePullBackOff error and takes a break.
+→ Kubelet comes back and tries to pull the image with not much success.
+
+Now. What follows is IMPORTANT.
+
+Because Backoff plays an important role.
+
+In this case, an image does not even exist.
+
+Here is how Backoff works.
+
+After failing for first time, Kubelet waits for 10 seconds before retrying.
+
+If the request is unsuccessful, this time, it wait for 20 seconds before trying again.
+
+Check the Backoff period table below.
+
+Attempt | Backoff period
+------- | --------
+1 | 10 seconds
+2 | 20 seconds
+3 | 40 seconds
+4 | 80 seconds
+5 | 160 seconds
+6 | 300 seconds
+
+The amount of time that the Kubelet waits is exponential than the previous one.
+
+The maximum backoff period is 5 minutes.
+
+Backoff period allows kubelet to take a break (waiting time) and prevents the Kubelet from continuously troubling the Container Registry.
+
+By doing so, it keeps both Kubernetes Cluster and Container Registry safe and happy ☺️
+
+Note that this is just one ImagePullBackOff scenario.
+
+More scenarios in future posts. Comment below your thoughts.
+
+ok final.
+
+
